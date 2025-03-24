@@ -1,0 +1,6 @@
+name: "activitynetv1_3"
+video_root: "/pasteur/data/ActivityNet200/videos"
+ann_root: "/pasteur/u/josaklil/neurips2024/assets"
+num_classes: 200
+max_classes: 5
+tiou_thresholds: [0.5, 0.75, 0.95]

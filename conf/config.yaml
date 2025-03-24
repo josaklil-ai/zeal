@@ -1,0 +1,77 @@
+defaults:
+  - _self_
+  - dataset: thumos14
+  - override hydra/hydra_logging: rich_logger
+  - override hydra/job_logging: rich_logger
+
+# Stage 1
+stage1: 
+  enable: False                       # whether to run stage 1
+  llm_type: "gpt4o"                   # the type of LLM to use in ["gpt4", "gpt4o"]
+  temperature: 1                      # the temperature for sampling from the LLM
+  max_tokens: 256                     # the maximum number of tokens to generate
+
+# Stage 2
+stage2: 
+  enable: False                       # whether to run stage 2
+  clip_model: 
+    arch: "EVA02-E-14-plus"           # the CLIP model to use in ["EVA02-E-14-plus", "ViT-SO400M-14-SigLIP-384"]
+    weights: "laion2b_s9b_b144k"      # pretrained weights for CLIP in ["laion2b_s9b_b144k", "webli"]
+    dim: 1024                         # the dimension of the CLIP model in ["1024", "1152"]
+    batch_size: 512                   # batch size for computing features
+
+# Stage 3
+stage3: 
+  enable: False                       # whether to run stage 3
+  eval: False                         # whether to evaluate the results of stage 3
+  overwrite: False                    # whether to force filtering of action classes
+  n_frames: 8                        # the number of frames to sample from each video
+  use_gt: False                       # whether to use ground truth action classes
+
+# Stage 4
+stage4: 
+  enable: False                       # whether to run stage 4
+  vlm_type: "pixtral"                # LVLM to use in ["cogagent", "llava-ov", "qwen2-vl", "pixtral"]
+  show_results: False                 # whether to visualize the results of stage 4
+  show_id: 'x_FAc0KqMVw'              # the example video to visualize
+  overwrite: False                    # whether to force recompute the soft scores
+  fps: 1                              # the number of frames per second to sample
+
+# Stage 5
+stage5: 
+  enable: False                       # whether to run stage 5
+  show_results: False                 # whether to visualize the results of stage 5
+  show_id: 'video_test_0000882'       # the example video to visualize
+  top_p: 0.35                         # top p% of scores for boundary detection
+  mm_eps: 0.05                        # the epsilon value for modified min-max normalization
+  _lambda: 0.1                        # weight for localization score vs actionness score
+  max_interval_len: 0.95              # the maximum length of predicted intervals (percentage)
+  merge_thresh: 0.9                   # the threshold for merging overlapping intervals
+  score_thresh: 0.0                   # (optional) the threshold for filtering low-scoring intervals
+  nms_thresh: 0.5                     # IoU threshold for "nms" and "linear" NMS
+  nms_sigma: 1.3                     # the sigma value for Gaussian "soft" NMS
+  nms_method: "soft"                  # the method to use for soft NMS in ["nms", "linear", "soft"]
+
+# Main
+seed: 1111
+score_strategy: "SEQ"                 # the strategy to use for scoring in ["SEQ", "PHR", "PHR-SEQ"]
+split: "test"                         # the split to use for evaluation in ["val", "test"]
+example_id: ""                        # an example video for testing e.g. '151' or 'uyGxlvak-Bg' or 'mbB7UFoTwpo' or 'x_FAc0KqMVw'
+max_videos: -1                        # or the maximum number of videos to process
+evaluate: False                       # whether to evaluate the results
+verbose: False                        # whether to print time spent information
+
+# Multiprocessing
+mp:
+  block_id: -1                        # in [0-num_blocks-1] or -1 for all blocks of data
+  num_blocks: 12                      # the number of blocks to split the video dataset into                 
+
+hydra:
+  # temporarily disable logging
+  run:
+    dir: ""
+  sweep:
+    dir: /tmp/${oc.env:USER}/multirun
+  job:
+    chdir: false
+  output_subdir: null
