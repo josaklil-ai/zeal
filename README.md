@@ -12,7 +12,7 @@ conda create -n zeal python=3.12
 conda activate zeal
 pip3 install -r requirements.txt
 ```
-Adjust the `OUTPUT_DIR` and `LOG_DIR` environment variables in the `.env` file to your choosing.
+Create a `.env` file in the project root directory and fill in your `OPENAI_API_KEY`, along with an `OUTPUT_DIR` and `LOG_DIR` for storing outputs.
 
 ### Usage
 This repo allows modular usage of the ZEAL pipeline. We also provide example scripts for running stages 2 and 4 on multiple GPUs for SLURM managed clusters in `scripts/`.
@@ -55,6 +55,7 @@ To generate final action localization proposals for each video, run
 python -m run stage3.use_gt=<True/False> stage5.enable=True
 ```
 
+***
 ### Evaluation
 To evaluate the performance of ZEAL on a dataset (using or not using ground truth action classes), run
 ```bash
